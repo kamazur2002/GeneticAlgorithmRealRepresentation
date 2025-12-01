@@ -52,8 +52,8 @@ class GeneticAlgorithmGUI(tk.Tk):
         self.widgets['p_inversion'] = self._create_entry(param_frame, "P(inversion):", 0.09, param_row); param_row += 1
         self.widgets['elite_p'] = self._create_entry(param_frame, "Elite Percentage:", 0.15, param_row); param_row += 1
         self.widgets['selection_method'] = self._create_combo(param_frame, "Selection Method:", ['best', 'tournament', 'roulette_wheel'], 'best', param_row); param_row += 1
-        self.widgets['crossover_method'] = self._create_combo(param_frame, "Crossover Method:", ['one_point', 'two_point', 'uniform', 'discrete'], 'two_point', param_row); param_row += 1
-        self.widgets['mutation_method'] = self._create_combo(param_frame, "Mutation Method:", ['one_point', 'two_point', 'boundary'], 'one_point', param_row); param_row += 1
+        self.widgets['crossover_method'] = self._create_combo(param_frame, "Crossover Method:", ['arithmetic_crossover', 'linear_crossover', 'blend_alpha_crossover', 'blend_alpha_beta_crossover', 'average_crossover'], 'arithmetic_crossover', param_row); param_row += 1
+        self.widgets['mutation_method'] = self._create_combo(param_frame, "Mutation Method:", ['uniform_mutation', 'gaussian_mutation'], 'uniform_mutation', param_row); param_row += 1
         self.widgets['optimization'] = self._create_combo(param_frame, "Optimization:", ['min', 'max'], 'min', param_row); param_row += 1
         self.widgets['db_file'] = self._create_entry(param_frame, "Database File:", "ga_results.db", param_row); param_row += 1
         

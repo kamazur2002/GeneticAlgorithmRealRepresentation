@@ -55,7 +55,7 @@ class AppController:
 
             status_text = (
                 f"Run finished!\n"
-                f"Best solution: {winner.decode()}\n"
+                f"Best solution: {winner.get_values()}\n"
                 f"Fitness: {winner.fitness:.4f}\n"
                 f"Execution time: {elapsed_time:.3f} s\n"
                 f"Results saved to {gui_data['db_file']}"
