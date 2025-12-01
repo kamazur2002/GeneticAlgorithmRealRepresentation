@@ -185,26 +185,47 @@ class GeneticAlgorithm:
 
     def _crossover(self, parent1: Chromosome, parent2: Chromosome):
         """Perform crossover between two parent chromosomes."""
-        method = self.config.get('crossover_method', 'one_point')
+        method = self.config.get('crossover_method', 'arithmetic_crossover')
 
         offspring1_genes = []
         offspring2_genes = []
+        offspring3_genes = []
 
         for g1, g2 in zip(parent1.genes, parent2.genes):
-            if method == 'one_point':
-                o1, o2 = CrossoverMethods.one_point_crossover(g1, g2)
-            elif method == 'two_point':
-                o1, o2 = CrossoverMethods.two_point_crossover(g1, g2)
-            elif method == 'uniform':
-                o1, o2 = CrossoverMethods.uniform_crossover(g1, g2)
-            elif method == 'discrete':
-                o1 = CrossoverMethods.discrete_crossover(g1, g2)
-                o2 = CrossoverMethods.discrete_crossover(g2, g1)
+            if method == 'arithmetic_crossover':
+                o1, o2 = CrossoverMethods.arithmetic_crossover(g1, g2)
+            elif method == 'linear_crossover':
+                o1, o2, o3 = CrossoverMethods.linear_crossover(g1, g2)
+            elif method == 'blend_alpha_crossover':
+                o1, o2 = CrossoverMethods.blend_alpha_crossover(g1, g2)
+            elif method == 'blend_alpha_beta_crossover':
+                o1, o2 = CrossoverMethods.blend_alpha_beta_crossover(g1, g2)
+            elif method == 'average_crossover':
+                o1 = CrossoverMethods.average_crossover(g1, g2)
             else:
                 raise ValueError(f"Unknown crossover method: {method}")
+        #FIX AMOUNT OF OFFSPRINGS FOR VARIOUS METHODS !!!!!!!!!!!!! 
 
             offspring1_genes.append(o1)
             offspring2_genes.append(o2)
+            if method == 'linear_crossover':
+                offspring3_genes.append(o3)
+                fitness1 = Chromosome(offspring1_genes, parent1.bounds, parent1.precision).evaluate_fitness(self.fitness_function)
+                fitness2 = Chromosome(offspring2_genes, parent1.bounds, parent1.precision).evaluate_fitness(self.fitness_function)
+                fitness3 = Chromosome(offspring3_genes, parent1.bounds, parent1.precision).evaluate_fitness(self.fitness_function)
+                if self.config.get('optimization', 'min') == 'min':
+                    best_genes = min(
+                        [(offspring1_genes, fitness1), (offspring2_genes, fitness2), (offspring3_genes, fitness3)],
+                        key=lambda x: x[1]
+                    )[0]
+                else:
+                    best_genes = max(
+                        [(offspring1_genes, fitness1), (offspring2_genes, fitness2), (offspring3_genes, fitness3)],
+                        key=lambda x: x[1]
+                    )[0]
+                offspring1_genes = best_genes[0]
+                offspring2_genes = best_genes[1]
+
 
         return (
             Chromosome(offspring1_genes, parent1.bounds, parent1.precision),
