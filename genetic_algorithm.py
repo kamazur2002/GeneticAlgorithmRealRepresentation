@@ -78,7 +78,7 @@ class GeneticAlgorithm:
             print("Population after mutation, crossover and inversion:")
             for i, c in enumerate(self.population):
                 print(f"  Chromosome {i + 1}: {c.genes}, Fitness: {c.fitness}")
-                print(f"Values: {c.decode()}")
+                print(f"Values: {c.get_values()}")
             
             best_solution = self._get_best_solution()
             stats = self._calculate_stats()
@@ -94,12 +94,11 @@ class GeneticAlgorithm:
 
             print(f"\nBest solution in epoch {epoch + 1}:")
             print(f"  Chromosome: {best_solution.genes}, Fitness: {best_solution.fitness}")
-            print(f"  Values: {best_solution.decode()}")
+            print(f"  Values: {best_solution.get_values()}")
 
         print("\n=== BEST SOLUTION AFTER ALL EPOCHS ===")
         print(f"  Chromosome: {best_solution.genes}, Fitness: {best_solution.fitness}")
-        print(f"  Values: {best_solution.decode()}")
-
+        print(f"  Values: {best_solution.get_values()}")
         print("\n=== END OF ALGORITHM RUN ===")
         return best_solution, history
 
