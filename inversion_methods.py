@@ -2,19 +2,21 @@ import random
 
 
 class InversionMethods:
-    """Class implementing inversion operations for chromosomes."""
+    """Class implementing inversion operations for real-representation chromosomes."""
 
     @staticmethod
-    def two_point_inversion(genes):
+    def two_point_inversion(genes, bounds):
         """
-        Standard two-point inversion — reverse order of bits between two random points.
+        Standard two-point inversion — reverse order of genes between two random points.
         """
-        new_genes = []
-        for gene in genes:
-            if len(gene) < 3:
-                new_genes.append(gene)
-                continue
-            i, j = sorted(random.sample(range(len(gene)), 2))
-            mutated = gene[:i] + gene[i:j + 1][::-1] + gene[j + 1:]
-            new_genes.append(mutated)
+        new_genes = genes.copy()
+        if len(genes) < 2:
+            return new_genes
+
+        i, j = sorted(random.sample(range(len(genes)), 2))
+        new_genes[i:j + 1] = reversed(new_genes[i:j + 1])
+
+        for index in range(i, j + 1):
+            if not (bounds[index][0] <= new_genes[index] <= bounds[index][1]):
+                return genes
         return new_genes

@@ -245,7 +245,7 @@ class GeneticAlgorithm:
             return chromosome
 
         if method == 'two_point':
-            new_genes = InversionMethods.two_point_inversion(chromosome.genes)
+            new_genes = InversionMethods.two_point_inversion(chromosome.genes, chromosome.bounds)
         else:
             raise ValueError(f"Unknown inversion method: {method}")
 
