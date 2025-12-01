@@ -191,6 +191,8 @@ class GeneticAlgorithm:
         offspring2_genes = []
         offspring3_genes = []
 
+        o3 = 0  # Placeholder for linear crossover third offspring
+
         for g1, g2 in zip(parent1.genes, parent2.genes):
             if method == 'arithmetic_crossover':
                 o1, o2 = CrossoverMethods.arithmetic_crossover(g1, g2)
@@ -202,30 +204,18 @@ class GeneticAlgorithm:
                 o1, o2 = CrossoverMethods.blend_alpha_beta_crossover(g1, g2)
             elif method == 'average_crossover':
                 o1 = CrossoverMethods.average_crossover(g1, g2)
+                o2 = o1  # Both offsprings get the same gene - TBC
             else:
                 raise ValueError(f"Unknown crossover method: {method}")
-        #FIX AMOUNT OF OFFSPRINGS FOR VARIOUS METHODS !!!!!!!!!!!!! 
 
             offspring1_genes.append(o1)
             offspring2_genes.append(o2)
             if method == 'linear_crossover':
                 offspring3_genes.append(o3)
-                fitness1 = Chromosome(offspring1_genes, parent1.bounds, parent1.precision).evaluate_fitness(self.fitness_function)
-                fitness2 = Chromosome(offspring2_genes, parent1.bounds, parent1.precision).evaluate_fitness(self.fitness_function)
-                fitness3 = Chromosome(offspring3_genes, parent1.bounds, parent1.precision).evaluate_fitness(self.fitness_function)
-                if self.config.get('optimization', 'min') == 'min':
-                    best_genes = min(
-                        [(offspring1_genes, fitness1), (offspring2_genes, fitness2), (offspring3_genes, fitness3)],
-                        key=lambda x: x[1]
-                    )[0]
-                else:
-                    best_genes = max(
-                        [(offspring1_genes, fitness1), (offspring2_genes, fitness2), (offspring3_genes, fitness3)],
-                        key=lambda x: x[1]
-                    )[0]
-                offspring1_genes = best_genes[0]
-                offspring2_genes = best_genes[1]
-
+        
+        if method == 'linear_crossover':
+            offspring1_genes, offspring2_genes = self._evaluate_offsprings(
+                [offspring1_genes, offspring2_genes, offspring3_genes], 2, parent1)
 
         return (
             Chromosome(offspring1_genes, parent1.bounds, parent1.precision),
@@ -300,3 +290,18 @@ class GeneticAlgorithm:
             'min_fitness': min_fitness,
             'std_fitness': std_fitness
         }
+    
+    def _evaluate_offsprings(self, offspring_genes, n, parent) -> tuple:
+        """Evaluate fitness of offsprings."""
+        evaluated = []
+        for genes in offspring_genes:
+            chrom = Chromosome(genes, parent.bounds, parent.precision)
+            fit = chrom.evaluate_fitness(self.fitness_function)
+            evaluated.append((genes, fit))
+
+        reverse = (self.config.get('optimization', 'max') == 'max')
+        evaluated.sort(key=lambda it: it[1], reverse=reverse)
+        n = max(0, min(n, len(evaluated)))
+
+        top_n_genes = [genes for genes, _ in evaluated[:n]]
+        return tuple(top_n_genes)
