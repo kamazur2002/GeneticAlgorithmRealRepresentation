@@ -109,13 +109,12 @@ class GeneticAlgorithm:
         return int(m)
 
     def _generate_chromosome(self, n_variables, bounds, precision):
-        """Generate a random binary chromosome"""
+        """Generate a random real-valued chromosome"""
         genes = []
         for i in range(n_variables):
             bound = bounds[i]
             m = self._calculate_gene_length(bound, precision)
-            gene = ''.join(['1' if random.random()
-                                   > 0.5 else '0' for _ in range(m)])
+            gene = round(random.uniform(bound[0], bound[1]), precision)
             genes.append(gene)
         return Chromosome(genes, bounds, precision)
 
