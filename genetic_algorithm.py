@@ -193,17 +193,17 @@ class GeneticAlgorithm:
 
         o3 = 0  # Placeholder for linear crossover third offspring
 
-        for g1, g2 in zip(parent1.genes, parent2.genes):
+        for g1, g2, bound in zip(parent1.genes, parent2.genes, parent1.bounds):
             if method == 'arithmetic_crossover':
-                o1, o2 = CrossoverMethods.arithmetic_crossover(g1, g2)
+                o1, o2 = CrossoverMethods.arithmetic_crossover(g1, g2, bound)
             elif method == 'linear_crossover':
-                o1, o2, o3 = CrossoverMethods.linear_crossover(g1, g2)
+                o1, o2, o3 = CrossoverMethods.linear_crossover(g1, g2, bound)
             elif method == 'blend_alpha_crossover':
-                o1, o2 = CrossoverMethods.blend_alpha_crossover(g1, g2)
+                o1, o2 = CrossoverMethods.blend_alpha_crossover(g1, g2, bound)
             elif method == 'blend_alpha_beta_crossover':
-                o1, o2 = CrossoverMethods.blend_alpha_beta_crossover(g1, g2)
+                o1, o2 = CrossoverMethods.blend_alpha_beta_crossover(g1, g2, bound)
             elif method == 'average_crossover':
-                o1 = CrossoverMethods.average_crossover(g1, g2)
+                o1 = CrossoverMethods.average_crossover(g1, g2, bound)
                 o2 = o1  # Both offsprings get the same gene - TBC
             else:
                 raise ValueError(f"Unknown crossover method: {method}")
@@ -224,15 +224,13 @@ class GeneticAlgorithm:
 
     def _mutation(self, chromosome: Chromosome) -> Chromosome:
         """Use selected mutation method to on chromosome."""
-        method = self.config.get('mutation_method', 'one_point')
+        method = self.config.get('mutation_method', 'uniform_mutation')
         p_mutation = self.config.get('p_mutation', 0.05)
 
-        if method == 'one_point':
-            new_genes = MutationMethods.one_point_mutation(chromosome.genes, p_mutation)
-        elif method == 'two_point':
-            new_genes = MutationMethods.two_point_mutation(chromosome.genes)
-        elif method == 'boundary':
-            new_genes = MutationMethods.boundary_mutation(chromosome.genes)
+        if method == 'uniform_mutation':
+            new_genes = MutationMethods.uniform_mutation(chromosome.genes, p_mutation, chromosome.bounds)
+        elif method == 'gaussian_mutation':
+            new_genes = MutationMethods.gaussian_mutation(chromosome.genes, p_mutation, chromosome.bounds, sigma = 0.5)
         else:
             raise ValueError(f"Unknown mutation method: {method}")
 

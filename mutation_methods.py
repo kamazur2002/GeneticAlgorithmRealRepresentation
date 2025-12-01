@@ -2,52 +2,36 @@ import random
 
 
 class MutationMethods:
-
+    """Class implementing mutation operations for real-representation chromosomes."""
+    
     @staticmethod
-    def one_point_mutation(genes, p_mutation):
+    def uniform_mutation(genes, p_mutation, bounds):
         """
-        Classic bit-flip mutation: for each bit, flip with probability p_mutation.
+        Uniform mutation: each gene has p probability of mutation.
         """
         new_genes = []
-        for gene in genes:
-            mutated = ''.join(
-                '1' if bit == '0' and random.random() < p_mutation else
-                '0' if bit == '1' and random.random() < p_mutation else bit
-                for bit in gene
-            )
-            new_genes.append(mutated)
-        return new_genes
-
-    @staticmethod
-    def two_point_mutation(genes):
-        """
-        Two-point mutation: choose two random points and reverse the bits between them.
-        (mutation applied to each gene independently)
-        """
-        new_genes = []
-        for gene in genes:
-            if len(gene) < 3:
+        for gene, bound in zip(genes, bounds):
+            if random.random() < p_mutation:
+                mutated_gene = random.uniform(bound[0], bound[1])
+                new_genes.append(mutated_gene)
+            else:
                 new_genes.append(gene)
-                continue
-            i, j = sorted(random.sample(range(len(gene)), 2))
-            mutated = gene[:i] + gene[i:j + 1][::-1] + gene[j + 1:]
-            new_genes.append(mutated)
         return new_genes
-
+    
     @staticmethod
-    def boundary_mutation(genes):
+    def gaussian_mutation(genes, p_mutation, bounds, sigma=0.1):
         """
-        Boundary mutation: flip only the first and last bits of the gene.
+        Gaussian mutation: each gene has p probability of mutation by adding Gaussian noise.
         """
         new_genes = []
-        for gene in genes:
-            if len(gene) < 2:
+        for gene, bound in zip(genes, bounds):
+            if random.random() < p_mutation:
+                noise = random.gauss(0, sigma)
+                mutated_gene = gene + noise
+                # Ensure mutated gene is within bounds
+                if not (bound[0] <= mutated_gene <= bound[1]):
+                    mutated_gene = gene  # Revert to original if out of bounds
+                new_genes.append(mutated_gene)
+            else:
                 new_genes.append(gene)
-                continue
-            mutated = (
-                ('1' if gene[0] == '0' else '0') +
-                gene[1:-1] +
-                ('1' if gene[-1] == '0' else '0')
-            )
-            new_genes.append(mutated)
         return new_genes
