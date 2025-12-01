@@ -29,3 +29,7 @@ class Chromosome:
 
         self.fitness = func(self.genes)
         return self.fitness
+
+    def get_values(self):
+        """Get the real-valued representation of the chromosome."""
+        return self.genes
