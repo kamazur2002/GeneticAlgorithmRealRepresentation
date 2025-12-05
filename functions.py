@@ -4,7 +4,7 @@ if not hasattr(pkgutil, "ImpImporter"):
     pkgutil.ImpImporter = zipimport.zipimporter
 from opfunu.cec_based import cec2014
 
-def F62014_fun(ndim=10):
+def F62014_fun(ndim):
     """
   Returns a callable wrapper for the CEC2014 F6 test function (Shifted and Rotated Weierstrass Function).
     """

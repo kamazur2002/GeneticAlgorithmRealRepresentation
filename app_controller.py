@@ -19,6 +19,12 @@ class AppController:
             func_name = gui_data['benchmark']
             benchmark_func_class = self.benchmark_functions[func_name]
 
+            if func_name == "McCormick":
+                benchmark_func = benchmark_func_class()
+            else:
+                n_dim = gui_data["n_vars"]
+                benchmark_func = benchmark_func_class(n_dim)
+
             config = {
                 'population_size': gui_data['pop_size'],
                 'n_variables': gui_data['n_vars'],
@@ -42,7 +48,7 @@ class AppController:
 
             start_time = time.time()
 
-            ga = GeneticAlgorithm(config, benchmark_func_class())
+            ga = GeneticAlgorithm(config, benchmark_func)
             winner, history = ga.run(epochs=gui_data['epochs'])
 
             end_time = time.time()
